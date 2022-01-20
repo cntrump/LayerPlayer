@@ -31,7 +31,7 @@
 import UIKit
 
 class ClassListViewController: UITableViewController {
-  
+
   var classes: [(String, String)] {
     get {
       return [
@@ -49,26 +49,26 @@ class ClassListViewController: UITableViewController {
       ]
     }
   }
-  
+
   var navController: UINavigationController!
   var detailViewController: UIViewController!
   var collapseDetailViewController = true
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     splitViewController?.delegate = self
   }
-  
+
   // MARK: - UITableViewDataSource
-  
+
   override func numberOfSections(in tableView: UITableView) -> Int {
     return 1
   }
-  
+
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return classes.count
   }
-  
+
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "ClassCell")!
     let row = indexPath.row
@@ -77,9 +77,9 @@ class ClassListViewController: UITableViewController {
     cell.imageView!.image = UIImage(named: classes[row].0)
     return cell
   }
-  
+
   // MARK: - UITableViewDelegate
-  
+
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let identifier = classes[indexPath.row].0
     navController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: identifier) as! UINavigationController
@@ -89,14 +89,13 @@ class ClassListViewController: UITableViewController {
     splitViewController?.showDetailViewController(navController, sender: nil)
     collapseDetailViewController = false
   }
-  
+
 }
 
 extension ClassListViewController: UISplitViewControllerDelegate {
-  
+
   func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
     return collapseDetailViewController
   }
-  
-}
 
+}

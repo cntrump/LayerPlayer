@@ -31,7 +31,7 @@
 import UIKit
 
 class CAGradientLayerViewController: UIViewController {
-  
+
   @IBOutlet weak var viewForGradientLayer: UIView!
   @IBOutlet weak var startPointSlider: UISlider!
   @IBOutlet weak var startPointSliderValueLabel: UILabel!
@@ -40,19 +40,19 @@ class CAGradientLayerViewController: UIViewController {
   @IBOutlet var colorSwitches: [UISwitch]!
   @IBOutlet var locationSliders: [UISlider]!
   @IBOutlet var locationSliderValueLabels: [UILabel]!
-  
+
   let gradientLayer = CAGradientLayer()
   var colors = [AnyObject]()
   let locations: [Float] = [0, 1/6.0, 1/3.0, 0.5, 2/3.0, 5/6.0, 1.0]
-  
+
   // MARK: - Quick reference
-  
+
   func sortOutletCollections() {
     colorSwitches.sortUIViewsInPlaceByTag()
     locationSliders.sortUIViewsInPlaceByTag()
     locationSliderValueLabels.sortUIViewsInPlaceByTag()
   }
-  
+
   func setUpColors() {
     colors = [cgColorForRed(209.0, green: 0.0, blue: 0.0),
       cgColorForRed(255.0, green: 102.0, blue: 34.0),
@@ -62,7 +62,7 @@ class CAGradientLayerViewController: UIViewController {
       cgColorForRed(34.0, green: 0.0, blue: 102.0),
       cgColorForRed(51.0, green: 0.0, blue: 68.0)]
   }
-  
+
   func setUpGradientLayer() {
     gradientLayer.frame = viewForGradientLayer.bounds
     gradientLayer.colors = colors
@@ -70,17 +70,17 @@ class CAGradientLayerViewController: UIViewController {
     gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
     gradientLayer.locations = locations as [NSNumber]?
   }
-  
+
   func setUpLocationSliders() {
     let sliders = locationSliders
-    
+
     for (index, slider) in (sliders?.enumerated())! {
       slider.value = locations[index]
     }
   }
-  
+
   // MARK: - View life cycle
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     sortOutletCollections()
@@ -90,26 +90,26 @@ class CAGradientLayerViewController: UIViewController {
     setUpLocationSliders()
     updateLocationSliderValueLabels()
   }
-  
+
   // MARK: - @IBActions
-  
+
   @IBAction func startPointSliderChanged(_ sender: UISlider) {
     gradientLayer.startPoint = CGPoint(x: CGFloat(sender.value), y: 0.0)
     updateStartAndEndPointValueLabels()
   }
-  
+
   @IBAction func endPointSliderChanged(_ sender: UISlider) {
     gradientLayer.endPoint = CGPoint(x: CGFloat(sender.value), y: 1.0)
     updateStartAndEndPointValueLabels()
   }
-  
+
   @IBAction func colorSwitchChanged(_ sender: UISwitch) {
     var gradientLayerColors = [AnyObject]()
     var locations = [NSNumber]()
-    
+
     for (index, colorSwitch) in colorSwitches.enumerated() {
       let slider = locationSliders[index]
-      
+
       if colorSwitch.isOn {
         gradientLayerColors.append(colors[index])
         locations.append(NSNumber(value: slider.value as Float))
@@ -118,42 +118,42 @@ class CAGradientLayerViewController: UIViewController {
         slider.isEnabled = false
       }
     }
-    
+
     if gradientLayerColors.count == 1 {
       gradientLayerColors.append(gradientLayerColors[0])
     }
-    
+
     gradientLayer.colors = gradientLayerColors
     gradientLayer.locations = locations.count > 1 ? locations : nil
     updateLocationSliderValueLabels()
   }
-  
+
   @IBAction func locationSliderChanged(_ sender: UISlider) {
     var gradientLayerLocations = [NSNumber]()
-    
+
     for (index, slider) in locationSliders.enumerated() {
       let colorSwitch = colorSwitches[index]
-      
+
       if colorSwitch.isOn {
         gradientLayerLocations.append(NSNumber(value: slider.value as Float))
       }
     }
-    
+
     gradientLayer.locations = gradientLayerLocations
     updateLocationSliderValueLabels()
   }
-  
+
   // MARK: - Triggered actions
-  
+
   func updateStartAndEndPointValueLabels() {
     startPointSliderValueLabel.text = String(format: "(%.1f, 0.0)", startPointSlider.value)
     endPointSliderValueLabel.text = String(format: "(%.1f, 1.0)", endPointSlider.value)
   }
-  
+
   func updateLocationSliderValueLabels() {
     for (index, label) in locationSliderValueLabels.enumerated() {
       let colorSwitch = colorSwitches[index]
-      
+
       if colorSwitch.isOn {
         let slider = locationSliders[index]
         label.text = String(format: "%.2f", slider.value)
@@ -163,11 +163,11 @@ class CAGradientLayerViewController: UIViewController {
       }
     }
   }
-  
+
   // MARK: - Helpers
-  
+
   func cgColorForRed(_ red: CGFloat, green: CGFloat, blue: CGFloat) -> AnyObject {
     return UIColor(red: red/255.0, green: green/255.0, blue: blue/255.0, alpha: 1.0).cgColor as AnyObject
   }
-  
+
 }

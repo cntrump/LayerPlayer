@@ -31,13 +31,13 @@
 import UIKit
 
 class TilingView: UIView {
-  
+
   let sideLength = CGFloat(100.0)
-  
-  override class var layerClass : AnyClass {
+
+  override class var layerClass: AnyClass {
     return TiledLayer.self
   }
-  
+
   required init?(coder aDecoder: NSCoder) {
     srand48(Int(Date().timeIntervalSince1970))
     super.init(coder: aDecoder)
@@ -45,17 +45,17 @@ class TilingView: UIView {
     layer.contentsScale = UIScreen.main.scale
     layer.tileSize = CGSize(width: sideLength, height: sideLength)
   }
-  
+
   override func draw(_ rect: CGRect) {
     let context = UIGraphicsGetCurrentContext()
     let scale = UIScreen.main.scale
-    
+
     var red = CGFloat(drand48())
     var green = CGFloat(drand48())
     var blue = CGFloat(drand48())
     context?.setFillColor(red: red, green: green, blue: blue, alpha: 1.0)
     context?.fill(rect)
-    
+
     let x = bounds.origin.x
     let y = bounds.origin.y
     let offset = bounds.width / sideLength * (scale == 3 ? 2 : scale)
@@ -67,7 +67,7 @@ class TilingView: UIView {
     context?.addLine(to: CGPoint(x: x + 41.0 * offset, y: y + 14.54 * offset))
     context?.addLine(to: CGPoint(x: x + 9.0 * offset, y: y + 43.0 * offset))
     context?.closePath()
-    
+
     red = CGFloat(drand48())
     green = CGFloat(drand48())
     blue = CGFloat(drand48())
@@ -76,5 +76,5 @@ class TilingView: UIView {
     context?.setLineWidth(4.0 / scale)
     context?.drawPath(using: .eoFillStroke)
   }
-  
+
 }

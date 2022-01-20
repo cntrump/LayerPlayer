@@ -30,10 +30,10 @@
 import UIKit
 
 extension UITableViewCell {
-  
+
   override open var layoutMargins: UIEdgeInsets {
     get { return UIEdgeInsets.zero }
     set { }
   }
-  
+
 }

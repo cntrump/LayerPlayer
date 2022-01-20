@@ -31,16 +31,16 @@
 import UIKit
 
 class CALayerViewController: UIViewController {
-  
+
   // FIXME: Unsatisfiable constraints in compact width, compact height (e.g., iPhone 5 in landscape)
-  
+
   @IBOutlet weak var viewForLayer: UIView!
-  
+
   let layer = CALayer()
   let star = UIImage(named: "star")?.cgImage
-  
+
   // MARK: - Quick reference
-  
+
   func setUpLayer() {
     layer.frame = viewForLayer.bounds
     layer.contents = star
@@ -55,15 +55,15 @@ class CALayerViewController: UIViewController {
     layer.shadowRadius = 3.0
     layer.magnificationFilter = .linear
   }
-  
+
   // MARK: - View life cycle
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     setUpLayer()
     viewForLayer.layer.addSublayer(layer)
   }
-  
+
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if let identifier = segue.identifier {
       switch identifier {
@@ -74,5 +74,5 @@ class CALayerViewController: UIViewController {
       }
     }
   }
-    
+
 }

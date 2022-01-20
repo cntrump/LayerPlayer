@@ -30,19 +30,19 @@
 import UIKit
 
 class CATiledImageLayerViewController: UIViewController {
-  
+
   @IBOutlet weak var doneButton: UIBarButtonItem!
   @IBOutlet weak var scrollView: UIScrollView!
   @IBOutlet weak var tilingView: TilingViewForImage!
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     doneButton.setTitleTextAttributes([.font: UIFont(name: "LayerPlayer", size: 23.0)!], for: .normal)
     scrollView.contentSize = CGSize(width: 5120, height: 3200)
   }
-  
+
   @IBAction func doneButtonTapped(_ sender: UIBarButtonItem) {
     dismiss(animated: true, completion: nil)
   }
-  
+
 }

@@ -31,31 +31,31 @@
 import UIKit
 
 class CAScrollLayerViewController: UIViewController {
-  
+
   @IBOutlet weak var scrollingView: ScrollingView!
   @IBOutlet weak var horizontalScrollingSwitch: UISwitch!
   @IBOutlet weak var verticalScrollingSwitch: UISwitch!
-  
+
   var scrollingViewLayer: CAScrollLayer {
     return scrollingView.layer as! CAScrollLayer
   }
-  
+
   // MARK: - View life cycle
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     scrollingViewLayer.scrollMode = .both
   }
-  
+
   // MARK: - IBActions
-  
+
   @IBAction func panRecognized(_ sender: UIPanGestureRecognizer) {
     var newPoint = scrollingView.bounds.origin
     newPoint.x -= sender.translation(in: scrollingView).x
     newPoint.y -= sender.translation(in: scrollingView).y
     sender.setTranslation(CGPoint.zero, in: scrollingView)
     scrollingViewLayer.scroll(to: newPoint)
-    
+
     if sender.state == .ended {
       UIView.animate(withDuration: 0.3, delay: 0, options: [], animations: {
         [unowned self] in
@@ -63,7 +63,7 @@ class CAScrollLayerViewController: UIViewController {
         }, completion: nil)
     }
   }
-  
+
   @IBAction func scrollingSwitchChanged(_ sender: UISwitch) {
     switch (horizontalScrollingSwitch.isOn, verticalScrollingSwitch.isOn) {
     case (true, true):
@@ -76,5 +76,5 @@ class CAScrollLayerViewController: UIViewController {
       scrollingViewLayer.scrollMode = .none
     }
   }
-  
+
 }

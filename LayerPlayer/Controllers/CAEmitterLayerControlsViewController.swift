@@ -31,20 +31,20 @@
 import UIKit
 
 class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate {
-  
+
   @IBOutlet weak var renderModePickerValueLabel: UILabel!
   @IBOutlet weak var renderModePicker: UIPickerView!
   @IBOutlet var sliderValueLabels: [UILabel]!
   @IBOutlet weak var enabledSwitch: UISwitch!
   @IBOutlet var sliders: [UISlider]!
-  
+
   enum Section: Int {
     case emitterLayer, emitterCell
   }
   enum Slider: Int {
     case color, redRange, greenRange, blueRange, alphaRange, redSpeed, greenSpeed, blueSpeed, alphaSpeed, scale, scaleRange, spin, spinRange, emissionLatitude, emissionLongitude, emissionRange, lifetime, lifetimeRange, birthRate, velocity, velocityRange, xAcceleration, yAcceleration
   }
-  
+
   weak var emitterLayerViewController: CAEmitterLayerViewController!
   var emitterLayer: CAEmitterLayer {
     return emitterLayerViewController.emitterLayer
@@ -54,27 +54,27 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
   }
   var emitterLayerRenderModes = [convertFromCAEmitterLayerRenderMode(.unordered), convertFromCAEmitterLayerRenderMode(.oldestFirst), convertFromCAEmitterLayerRenderMode(.oldestLast), convertFromCAEmitterLayerRenderMode(.backToFront), convertFromCAEmitterLayerRenderMode(.additive)] as NSArray
   var renderModePickerVisible = false
-  
+
   // MARK: - View life cycle
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     updateRenderModePickerValueLabel()
     updateSliderValueLabels()
   }
-  
+
   // MARK: - IBActions
-  
+
   @IBAction func enabledSwitchChanged(_ sender: UISwitch) {
     emitterLayerViewController.emitterCell.isEnabled = sender.isOn
     emitterLayerViewController.resetEmitterCells()
   }
-  
+
   @IBAction func sliderChanged(_ sender: UISlider) {
     let slidersArray = sliders as NSArray
     let slider = Slider(rawValue: slidersArray.index(of: sender))!
     var keyPath = "emitterCell."
-    
+
     switch slider {
     case .color: keyPath += "color"
     case .redRange: keyPath += "redRange"
@@ -100,7 +100,7 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
     case .xAcceleration: keyPath += "xAcceleration"
     case .yAcceleration: keyPath += "yAcceleration"
     }
-    
+
     if keyPath == "emitterCell.color" {
       let color = UIColor(hue: 0.0, saturation: 0.0, brightness: CGFloat(sender.value), alpha: 1.0)
       emitterLayerViewController.emitterCell.color = color.cgColor
@@ -109,12 +109,12 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
       emitterLayerViewController.setValue(NSNumber(value: sender.value as Float), forKeyPath: keyPath)
       emitterLayerViewController.resetEmitterCells()
     }
-    
+
     updateSliderValueLabel(slider)
   }
-  
+
   // MARK: - Triggered actions
-  
+
   func showEmitterLayerRenderModePicker() {
     renderModePickerVisible = true
     relayoutTableViewCells()
@@ -122,19 +122,19 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
     renderModePicker.selectRow(index, inComponent: 0, animated: false)
     renderModePicker.isHidden = false
     renderModePicker.alpha = 0.0
-    
+
     UIView.animate(withDuration: 0.25, animations: {
       [unowned self] in
       self.renderModePicker.alpha = 1.0
     })
   }
-  
+
   func hideEmitterLayerRenderModePicker() {
     if renderModePickerVisible {
       UIApplication.shared.beginIgnoringInteractionEvents()
       renderModePickerVisible = false
       relayoutTableViewCells()
-      
+
       UIView.animate(withDuration: 0.25, animations: {
         [unowned self] in
         self.renderModePicker.alpha = 0.0
@@ -145,24 +145,24 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
       })
     }
   }
-  
+
   // MARK: - Helpers
-  
+
   func updateRenderModePickerValueLabel() {
     renderModePickerValueLabel.text = convertFromCAEmitterLayerRenderMode(emitterLayer.renderMode)
   }
-  
+
   func updateSliderValueLabels() {
     for slider in Slider.color.rawValue...Slider.yAcceleration.rawValue {
       updateSliderValueLabel(Slider(rawValue: slider)!)
     }
   }
-  
+
   func updateSliderValueLabel(_ sliderEnum: Slider) {
     let index = sliderEnum.rawValue
     let label = sliderValueLabels[index]
     let slider = sliders[index]
-    
+
     switch sliderEnum {
     case .redRange, .greenRange, .blueRange, .alphaRange, .redSpeed, .greenSpeed, .blueSpeed, .alphaSpeed, .scale, .scaleRange, .lifetime, .lifetimeRange:
       label.text = String(format: "%.1f", slider.value)
@@ -176,27 +176,27 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
       label.text = String(format: "%.0f", slider.value)
     }
   }
-  
+
   func relayoutTableViewCells() {
     tableView.beginUpdates()
     tableView.endUpdates()
   }
-  
+
   // MARK: - UITableViewDelegate
-  
+
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     let section = Section(rawValue: indexPath.section)!
-    
+
     if section == .emitterLayer && indexPath.row == 1 {
       return renderModePickerVisible ? 162.0 : 0.0
     } else {
       return 44.0
     }
   }
-  
+
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let section = Section(rawValue: indexPath.section)!
-    
+
     switch section {
     case .emitterLayer where !renderModePickerVisible:
       showEmitterLayerRenderModePicker()
@@ -204,36 +204,36 @@ class CAEmitterLayerControlsViewController: UITableViewController, UIPickerViewD
       hideEmitterLayerRenderModePicker()
     }
   }
-  
+
   // MARK: - UIPickerViewDataSource
-  
+
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
     return 1
   }
-  
+
   func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
     return emitterLayerRenderModes.count
   }
-  
+
   // MARK: - UIPickerViewDelegate
-  
+
   func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
     return emitterLayerRenderModes[row] as? String
   }
-  
+
   func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
     emitterLayerViewController.emitterLayer.renderMode = convertToCAEmitterLayerRenderMode(emitterLayerRenderModes[row] as! String)
     updateRenderModePickerValueLabel()
   }
-  
+
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromCAEmitterLayerRenderMode(_ input: CAEmitterLayerRenderMode) -> String {
+private func convertFromCAEmitterLayerRenderMode(_ input: CAEmitterLayerRenderMode) -> String {
 	return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToCAEmitterLayerRenderMode(_ input: String) -> CAEmitterLayerRenderMode {
+private func convertToCAEmitterLayerRenderMode(_ input: String) -> CAEmitterLayerRenderMode {
 	return CAEmitterLayerRenderMode(rawValue: input)
 }

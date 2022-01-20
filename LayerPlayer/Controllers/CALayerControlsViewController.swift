@@ -31,7 +31,7 @@
 import UIKit
 
 class CALayerControlsViewController: UITableViewController, UIPickerViewDataSource, UIPickerViewDelegate {
-  
+
   @IBOutlet weak var contentsGravityPickerValueLabel: UILabel!
   @IBOutlet weak var contentsGravityPicker: UIPickerView!
   @IBOutlet var switches: [UISwitch]!
@@ -46,7 +46,7 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
   @IBOutlet weak var shadowColorSlidersValueLabel: UILabel!
   @IBOutlet var shadowColorSliders: [UISlider]!
   @IBOutlet weak var magnificationFilterSegmentedControl: UISegmentedControl!
-  
+
   enum Row: Int {
     case contentsGravity, contentsGravityPicker, displayContents, geometryFlipped, hidden, opacity, cornerRadius, borderWidth, borderColor, backgroundColor, shadowOpacity, shadowOffset, shadowRadius, shadowColor, magnificationFilter
   }
@@ -62,24 +62,24 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
   enum MagnificationFilter: Int {
     case linear, nearest, trilinear
   }
-  
+
   weak var layerViewController: CALayerViewController!
   var contentsGravityValues = [convertFromCALayerContentsGravity(.center), convertFromCALayerContentsGravity(.top), convertFromCALayerContentsGravity(.bottom), convertFromCALayerContentsGravity(.left), convertFromCALayerContentsGravity(.right), convertFromCALayerContentsGravity(.topLeft), convertFromCALayerContentsGravity(.topRight), convertFromCALayerContentsGravity(.bottomLeft), convertFromCALayerContentsGravity(.bottomRight), convertFromCALayerContentsGravity(.resize), convertFromCALayerContentsGravity(.resizeAspect), convertFromCALayerContentsGravity(.resizeAspectFill)] as NSArray
   var contentsGravityPickerVisible = false
-  
+
   // MARK: - View life cycle
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     updateSliderValueLabels()
   }
-  
+
   // MARK: - IBActions
-  
+
   @IBAction func switchChanged(_ sender: UISwitch) {
     let switchesArray = switches as NSArray
     let theSwitch = Switch(rawValue: switchesArray.index(of: sender))!
-    
+
     switch theSwitch {
     case .displayContents:
       layerViewController.layer.contents = sender.isOn ? layerViewController.star : nil
@@ -89,11 +89,11 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
       layerViewController.layer.isHidden = sender.isOn
     }
   }
-  
+
   @IBAction func sliderChanged(_ sender: UISlider) {
     let slidersArray = sliders as NSArray
     let slider = Slider(rawValue: slidersArray.index(of: sender))!
-    
+
     switch slider {
     case .opacity:
       layerViewController.layer.opacity = sender.value
@@ -106,10 +106,10 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
     case .shadowRadius:
       layerViewController.layer.shadowRadius = CGFloat(sender.value)
     }
-    
+
     updateSliderValueLabel(slider)
   }
-  
+
   @IBAction func borderColorSliderChanged(_ sender: UISlider) {
     let colorAndLabel = colorAndLabelForSliders(borderColorSliders)
     layerViewController.layer.borderColor = colorAndLabel.color
@@ -121,24 +121,24 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
     layerViewController.layer.backgroundColor = colorAndLabel.color
     backgroundColorSlidersValueLabel.text = colorAndLabel.label
   }
-  
+
   @IBAction func shadowOffsetSliderChanged(_ sender: UISlider) {
     let width = CGFloat(shadowOffsetSliders[0].value)
     let height = CGFloat(shadowOffsetSliders[1].value)
     layerViewController.layer.shadowOffset = CGSize(width: width, height: height)
     shadowOffsetSlidersValueLabel.text = "Width: \(Int(width)), Height: \(Int(height))"
   }
-  
+
   @IBAction func shadowColorSliderChanged(_ sender: UISlider) {
     let colorAndLabel = colorAndLabelForSliders(shadowColorSliders)
     layerViewController.layer.shadowColor = colorAndLabel.color
     shadowColorSlidersValueLabel.text = colorAndLabel.label
   }
-  
+
   @IBAction func magnificationFilterSegmentedControlChanged(_ sender: UISegmentedControl) {
     let filter = MagnificationFilter(rawValue: sender.selectedSegmentIndex)!
     var filterValue = ""
-    
+
     switch filter {
     case .linear:
       filterValue = convertFromCALayerContentsFilter(.linear)
@@ -147,12 +147,12 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
     case .trilinear:
       filterValue = convertFromCALayerContentsFilter(.trilinear)
     }
-    
+
     layerViewController.layer.magnificationFilter = convertToCALayerContentsFilter(filterValue)
   }
-  
+
   // MARK: - Triggered actions
-  
+
   func showContentsGravityPicker() {
     contentsGravityPickerVisible = true
     relayoutTableViewCells()
@@ -160,19 +160,19 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
     contentsGravityPicker.selectRow(index, inComponent: 0, animated: false)
     contentsGravityPicker.isHidden = false
     contentsGravityPicker.alpha = 0.0
-    
+
     UIView.animate(withDuration: 0.25, animations: {
       [unowned self] in
       self.contentsGravityPicker.alpha = 1.0
     })
   }
-  
+
   func hideContentsGravityPicker() {
     if contentsGravityPickerVisible {
       tableView.isUserInteractionEnabled = false
       contentsGravityPickerVisible = false
       relayoutTableViewCells()
-      
+
       UIView.animate(withDuration: 0.25, animations: {
         [unowned self] in
         self.contentsGravityPicker.alpha = 0.0
@@ -183,24 +183,24 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
       })
     }
   }
-  
+
   // MARK: - Helpers
-  
+
   func updateContentsGravityPickerValueLabel() {
     contentsGravityPickerValueLabel.text = convertFromCALayerContentsGravity(layerViewController.layer.contentsGravity)
   }
-  
+
   func updateSliderValueLabels() {
     for slider in Slider.opacity.rawValue...Slider.shadowRadius.rawValue {
       updateSliderValueLabel(Slider(rawValue: slider)!)
     }
   }
-  
+
   func updateSliderValueLabel(_ sliderEnum: Slider) {
     let index = sliderEnum.rawValue
     let label = sliderValueLabels[index]
     let slider = sliders[index]
-    
+
     switch sliderEnum {
     case .opacity, .shadowOpacity:
       label.text = String(format: "%.1f", slider.value)
@@ -208,7 +208,7 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
       label.text = "\(Int(slider.value))"
     }
   }
-  
+
   func colorAndLabelForSliders(_ sliders: [UISlider]) -> (color: CGColor, label: String) {
     let red = CGFloat(sliders[0].value)
     let green = CGFloat(sliders[1].value)
@@ -217,27 +217,27 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
     let label = "RGB: \(Int(red)), \(Int(green)), \(Int(blue))"
     return (color: color, label: label)
   }
-  
+
   func relayoutTableViewCells() {
     tableView.beginUpdates()
     tableView.endUpdates()
   }
-  
+
   // MARK: - UITableViewDelegate
-  
+
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     let row = Row(rawValue: indexPath.row)!
-    
+
     if row == .contentsGravityPicker {
       return contentsGravityPickerVisible ? 162.0 : 0.0
     } else {
       return 44.0
     }
   }
-  
+
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let row = Row(rawValue: indexPath.row)!
-    
+
     switch row {
     case .contentsGravity where !contentsGravityPickerVisible:
       showContentsGravityPicker()
@@ -245,23 +245,23 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
       hideContentsGravityPicker()
     }
   }
-  
+
   // MARK: - UIPickerViewDataSource
-  
+
   func numberOfComponents(in pickerView: UIPickerView) -> Int {
     return 1
   }
-  
+
   func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
     return contentsGravityValues.count
   }
-  
+
   // MARK: - UIPickerViewDelegate
-  
+
   func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
     return contentsGravityValues[row] as? String
   }
-  
+
   func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
     layerViewController.layer.contentsGravity = convertToCALayerContentsGravity(contentsGravityValues[row] as! String)
     updateContentsGravityPickerValueLabel()
@@ -270,21 +270,21 @@ class CALayerControlsViewController: UITableViewController, UIPickerViewDataSour
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromCALayerContentsGravity(_ input: CALayerContentsGravity) -> String {
+private func convertFromCALayerContentsGravity(_ input: CALayerContentsGravity) -> String {
 	return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromCALayerContentsFilter(_ input: CALayerContentsFilter) -> String {
+private func convertFromCALayerContentsFilter(_ input: CALayerContentsFilter) -> String {
 	return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToCALayerContentsFilter(_ input: String) -> CALayerContentsFilter {
+private func convertToCALayerContentsFilter(_ input: String) -> CALayerContentsFilter {
 	return CALayerContentsFilter(rawValue: input)
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToCALayerContentsGravity(_ input: String) -> CALayerContentsGravity {
+private func convertToCALayerContentsGravity(_ input: String) -> CALayerContentsGravity {
 	return CALayerContentsGravity(rawValue: input)
 }
